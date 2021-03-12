@@ -7,10 +7,12 @@ import router from "./router";
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
 import "@/assets/style/reset.css";
+import http from "@/plugins/http";
 
 Vue.config.productionTip = false;
 
 Vue.use(Antd);
+Vue.use(http);
 
 /* eslint-disable no-new */
 new Vue({

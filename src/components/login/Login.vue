@@ -34,7 +34,11 @@ export default {
       form: this.$form.createForm(this)
     };
   },
-
+  mounted: function() {
+    this.$http.get("http://localhost:5050/").then(res => {
+      console.log("res:", res);
+    });
+  },
   methods: {
     handleSubmit: function(e) {
       e.preventDefault();
