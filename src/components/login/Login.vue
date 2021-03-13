@@ -34,29 +34,26 @@ export default {
       form: this.$form.createForm(this)
     };
   },
-  mounted: function() {
-
-  },
+  mounted: function() {},
   methods: {
     handleSubmit: function(e) {
-      this.form.validateFields((err, values) => {
+      this.form.validateFields(async function(err, values) {
         if (err) {
-          this.$message({
-            message: err,
-            type: "danger"
-          });
-          return;
+          return this.$message.error(`表单数据:${JSON.stringify(err)}`);
         }
-        this.$http.post("/login", values).then(res => {
-          const {data, meta: {msg, status}} = res;
-          if (status === 200) {
-            this.$router.push({name: "home"});
-            this.$message.success("登录成功");
-            console.log("data:", data);
-          } else {
-            this.$message.error(msg);
-          }
-        });
+        const res = await this.$http.post("/login", values);
+        const {
+          data: { token },
+          meta: { msg, status }
+        } = res;
+        if (status === 200) {
+          // 跳转路由，成功提示和缓存token
+          this.$router.push({ name: "home" });
+          this.$message.success("登录成功");
+          localStorage.setItem("token", token);
+        } else {
+          this.$message.error(msg);
+        }
       });
     }
   }
@@ -75,9 +72,6 @@ export default {
     background: #fff;
     border-radius: 5px;
     padding: 30px;
-  }
-  .login-btn {
-    width: 100%;
   }
 }
 </style>
