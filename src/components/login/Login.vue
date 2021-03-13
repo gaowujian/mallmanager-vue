@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <a-form layout="vertical" :form="form" class="login-form" @submit="handleSubmit">
+    <a-form layout="vertical" :form="form" class="login-form" @submit.prevent="handleSubmit">
       <h2>用户登录</h2>
       <a-form-item label="用户名">
         <a-input placeholder="请输入用户名" v-decorator="[
@@ -35,17 +35,28 @@ export default {
     };
   },
   mounted: function() {
-    this.$http.get("http://localhost:5050/").then(res => {
-      console.log("res:", res);
-    });
+
   },
   methods: {
     handleSubmit: function(e) {
-      e.preventDefault();
       this.form.validateFields((err, values) => {
-        if (!err) {
-          console.log("Received values of form: ", values);
+        if (err) {
+          this.$message({
+            message: err,
+            type: "danger"
+          });
+          return;
         }
+        this.$http.post("/login", values).then(res => {
+          const {data, meta: {msg, status}} = res;
+          if (status === 200) {
+            this.$router.push({name: "home"});
+            this.$message.success("登录成功");
+            console.log("data:", data);
+          } else {
+            this.$message.error(msg);
+          }
+        });
       });
     }
   }
