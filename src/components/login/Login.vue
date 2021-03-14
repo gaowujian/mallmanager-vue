@@ -37,22 +37,23 @@ export default {
   mounted: function() {},
   methods: {
     handleSubmit: function(e) {
+      const vm = this;
       this.form.validateFields(async function(err, values) {
         if (err) {
           return this.$message.error(`表单数据:${JSON.stringify(err)}`);
         }
-        const res = await this.$http.post("/login", values);
+        const res = await vm.$http.post("/login", values);
         const {
           data: { token },
           meta: { msg, status }
         } = res;
         if (status === 200) {
           // 跳转路由，成功提示和缓存token
-          this.$router.push({ name: "home" });
-          this.$message.success("登录成功");
+          vm.$router.push({ name: "home" });
+          vm.$message.success("登录成功");
           localStorage.setItem("token", token);
         } else {
-          this.$message.error(msg);
+          vm.$message.error(msg);
         }
       });
     }

@@ -125,6 +125,12 @@ export default {
   .middle {
     text-align: center;
   }
+  .ant-btn-link {
+    color: #000;
+    &:hover {
+      color: lighten(#000, 40%);
+    }
+  }
 }
 .home-sider {
   background: #fff;

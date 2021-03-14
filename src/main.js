@@ -5,7 +5,7 @@ import App from "./App";
 import router from "./router";
 
 import Antd from "ant-design-vue";
-import "ant-design-vue/dist/antd.css";
+import "ant-design-vue/dist/antd.less";
 import "@/assets/style/reset.css";
 import http from "@/plugins/http";
 
