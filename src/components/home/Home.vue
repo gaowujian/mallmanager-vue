@@ -67,12 +67,12 @@
             <a-menu-item key="data-list">
               <a-icon type="tag" /> 数据列表
             </a-menu-item>
-
           </a-sub-menu>
-
         </a-menu>
       </a-layout-sider>
-      <a-layout-content class="home-content">Content</a-layout-content>
+      <a-layout-content class="home-content">
+        <router-view></router-view>
+      </a-layout-content>
     </a-layout>
 
   </a-layout>
@@ -122,10 +122,11 @@ export default {
 };
 </script >
 
-<style lang="less">
+<style lang="less" scoped>
 .home-container {
   height: 100%;
 }
+
 .home-header {
   background: #95a5a6;
   .middle {
