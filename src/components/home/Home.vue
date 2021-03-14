@@ -9,7 +9,7 @@
           <h3>后台管理系统</h3>
         </a-col>
         <a-col :span="2">
-          <a-button type="link">
+          <a-button type="link" @click="handleLogout">
             退出
           </a-button>
         </a-col>
@@ -111,6 +111,12 @@ export default {
       } else {
         this.openKeys = latestOpenKey ? [latestOpenKey] : [];
       }
+    },
+    handleLogout() {
+      // 清除缓存，提示和路由跳转
+      localStorage.clear();
+      this.$message.success("退出成功");
+      this.$router.push({ name: "login" });
     }
   }
 };
