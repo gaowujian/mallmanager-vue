@@ -17,12 +17,12 @@
     </a-layout-header>
     <a-layout>
       <a-layout-sider class="home-sider">
-        <a-menu :open-keys="openKeys" mode="inline" @openChange="onOpenChange">
+        <a-menu :open-keys="openKeys" mode="inline" @openChange="onOpenChange" @click="handleItemClick">
           <a-sub-menu key="user-management">
             <span slot="title">
               <a-icon type="appstore" /><span>用户管理</span>
             </span>
-            <a-menu-item key="user-list">
+            <a-menu-item key="users">
               <a-icon type="tag" /> 用户列表
             </a-menu-item>
           </a-sub-menu>
@@ -112,15 +112,21 @@ export default {
         this.openKeys = latestOpenKey ? [latestOpenKey] : [];
       }
       console.log("this.openKeys[0]:", this.openKeys[0]);
-      this.$router.push({
-        name: this.openKeys[0]
-      });
     },
     handleLogout() {
       // 清除缓存，提示和路由跳转
       localStorage.clear();
       this.$message.success("退出成功");
       this.$router.push({ name: "login" });
+    },
+    handleItemClick({ key }) {
+      // !fix 修复路由跳转的问题
+      // console.log("this.$router:", this.$router);
+      if (this.$route.path !== `/${key}`) {
+        this.$router.push({
+          name: key
+        });
+      }
     }
   }
 };
