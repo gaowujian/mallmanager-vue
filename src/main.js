@@ -8,9 +8,13 @@ import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.less";
 import "@/assets/style/reset.css";
 import http from "@/plugins/http";
-
+import { format } from "date-fns";
 Vue.config.productionTip = false;
 
+// 全局的时间过滤器
+Vue.filter("fmtDate", function(v) {
+  return format(v, "yyyy-MM-dd");
+});
 Vue.use(Antd);
 Vue.use(http);
 

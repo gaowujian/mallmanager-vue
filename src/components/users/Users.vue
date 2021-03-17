@@ -10,28 +10,26 @@
         </a-breadcrumb>
         <!-- 搜索框 -->
         <a-space>
-          <a-input-search placeholder="请输入要搜索的内容" enter-button @search="onSearch" />
+          <a-input-search
+            placeholder="请输入要搜索的内容"
+            enter-button
+            @search="onSearch"
+          />
           <a-button>添加用户</a-button>
         </a-space>
         <!-- 表格 -->
-        <a-table :columns="columns" :data-source="data" class="user-table">
-          <a slot="name" slot-scope="text">{{ text }}</a>
-          <span slot="customTitle">
-            #
+        <a-table
+          :columns="columns"
+          :data-source="userList"
+          class="user-table"
+          :rowKey="(record) => record.id"
+        >
+          <span slot="order" slot-scope="text, record, index">
+            {{ index }}
           </span>
-          <span slot="tags" slot-scope="tags">
-            <a-tag v-for="tag in tags" :key="tag" :color="tag === 'loser' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'">
-              {{ tag.toUpperCase() }}
-            </a-tag>
-          </span>
-          <span slot="action" slot-scope="text, record">
-            <a>Invite 一 {{ record.name }}</a>
-            <a-divider type="vertical" />
-            <a>Delete</a>
-            <a-divider type="vertical" />
-            <a class="ant-dropdown-link"> More actions
-              <a-icon type="down" />
-            </a>
+          <span slot="create_time" slot-scope="text, record">
+            <!-- 过滤器进行格式化 -->
+            {{ record.create_time | fmtDate }}
           </span>
         </a-table>
         <!-- 分页 -->
@@ -45,13 +43,15 @@ const columns = [
   {
     dataIndex: "num",
     key: "num",
-    slots: { title: "customTitle" },
-    scopedSlots: { customRender: "num" }
+    title: "#",
+    scopedSlots: {
+      customRender: "order"
+    }
   },
   {
     title: "姓名",
-    dataIndex: "name",
-    key: "name"
+    dataIndex: "username",
+    key: "username"
   },
   {
     title: "邮箱",
@@ -60,18 +60,22 @@ const columns = [
   },
   {
     title: "电话",
-    dataIndex: "phone",
-    key: "phone"
+    dataIndex: "mobile",
+    key: "mobile"
   },
   {
     title: "创建时间",
-    dataIndex: "createTime",
-    key: "createTime"
+    dataIndex: "create_time",
+    key: "create_time",
+    scopedSlots: {
+      customRender: "create_time"
+    }
   },
   {
     title: "用户状态",
-    dataIndex: "status",
-    key: "status"
+    dataIndex: "mg_state",
+    key: "mg_state"
+
   },
   {
     title: "操作",
@@ -80,35 +84,38 @@ const columns = [
   }
 ];
 
-const data = [
-  {
-    key: "1",
-    num: "1",
-    name: "John Brown",
-    email: 32
-  },
-  {
-    key: "2",
-    num: "2",
-    name: "Jim Green",
-    email: 42
-  },
-  {
-    key: "3",
-    num: "3",
-    name: "Joe Black",
-    email: 32
-  }
-];
 export default {
   data() {
     return {
-      data,
-      columns
+      userList: [],
+      columns,
+      pagenum: 1,
+      pagesize: 10,
+      total: -1
     };
   },
+  created() {
+    this.getUserList();
+  },
   methods: {
-    onSearch() {}
+    onSearch() {},
+    async getUserList() {
+      const res = await this.$http.get("/users", {
+        params: {
+          query: "",
+          pagenum: this.pagenum,
+          pagesize: this.pagesize
+        }
+      });
+      const {data, meta: {msg, status}} = res;
+      if (status === 200) {
+        this.userList = data.users;
+        this.total = data.total;
+        this.$message.success(msg);
+      } else {
+        this.$message.error(msg);
+      }
+    }
   }
 };
 </script>
