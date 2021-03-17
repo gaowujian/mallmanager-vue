@@ -31,6 +31,12 @@
             <!-- 过滤器进行格式化 -->
             {{ record.create_time | fmtDate }}
           </span>
+          <div slot="mg_state" slot-scope="text, record, index">
+            <a-switch
+              :defaultChecked="record.mg_state"
+              @change="(checked) => handleSwitchChange(checked, index)"
+            />
+          </div>
         </a-table>
         <!-- 分页 -->
       </a-space>
@@ -74,7 +80,10 @@ const columns = [
   {
     title: "用户状态",
     dataIndex: "mg_state",
-    key: "mg_state"
+    key: "mg_state",
+    scopedSlots: {
+      customRender: "mg_state"
+    }
 
   },
   {
@@ -115,6 +124,9 @@ export default {
       } else {
         this.$message.error(msg);
       }
+    },
+    handleSwitchChange(checked, index) {
+      this.userList[index].mg_state = checked;
     }
   }
 };
