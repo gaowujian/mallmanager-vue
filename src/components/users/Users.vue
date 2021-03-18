@@ -34,10 +34,10 @@
             <!-- 过滤器进行格式化 -->
             {{ record.create_time | fmtDate }}
           </span>
-          <div slot="mg_state" slot-scope="text, record, index">
+          <div slot="mg_state" slot-scope="text, record">
             <a-switch
-              :defaultChecked="record.mg_state"
-              @change="(checked) => handleSwitchChange(checked, index)"
+              :default-checked="record.mg_state"
+              @change="(checked) => handleSwitchChange(checked, record)"
             />
           </div>
           <div slot="actions" slot-scope="text, record">
@@ -238,8 +238,21 @@ export default {
         this.$message.error(msg);
       }
     },
-    handleSwitchChange(checked, index) {
-      this.userList[index].mg_state = checked;
+    async handleSwitchChange(checked, record) {
+      // ! 修改的操作应该是修改一条数据之后，然后发送api，告知服务器修改该条数据，
+      // ! 然后重新getUserList获取最新状态,而不是直接操作data的list
+      // this.userList[index].mg_state = checked;
+
+      const {meta: {msg, status}} = await this.$http.put(`/users/${record.id}/state/${checked}`);
+      if (status === 200) {
+        this.$message.success(msg);
+      } else {
+        this.$message.error(msg);
+        // 如果状态更新有误,那么重新刷新页面，保证页面数据的正确性
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
     },
     handleSearch(value, e) {
       this.query = value;
