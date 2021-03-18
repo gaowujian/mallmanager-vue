@@ -24,7 +24,10 @@
               <a-icon type="appstore" /><span>用户管理</span>
             </span>
             <a-menu-item key="users">
-              <a-icon type="tag" /> 用户列表
+              <div>
+                <a-icon type="tag" />
+                <router-link to="/users">用户列表</router-link>
+              </div>
             </a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="permission-management">
@@ -32,10 +35,16 @@
               <a-icon type="appstore" /><span>权限管理</span>
             </span>
             <a-menu-item key="role-list">
-              <a-icon type="tag" /> 角色列表
+              <div>
+                <a-icon type="tag" />
+                <router-link to="roles">角色列表</router-link>
+              </div>
             </a-menu-item>
             <a-menu-item key="permission-list">
-              <a-icon type="tag" /> 权限列表
+              <div>
+                <a-icon type="tag" />
+                <router-link to="permissions">权限列表</router-link>
+              </div>
             </a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="product-management">
@@ -43,13 +52,22 @@
               <a-icon type="appstore" /><span>商品管理</span>
             </span>
             <a-menu-item key="product-list">
-              <a-icon type="tag" /> 商品列表
+              <div>
+                <a-icon type="tag" />
+                <router-link to="/products">商品列表</router-link>
+              </div>
             </a-menu-item>
             <a-menu-item key="category-params">
-              <a-icon type="tag" /> 分类参数
+              <div>
+                <a-icon type="tag" />
+                <router-link to="/params">分类参数</router-link>
+              </div>
             </a-menu-item>
             <a-menu-item key="product-category">
-              <a-icon type="tag" /> 商品分类
+              <div>
+                <a-icon type="tag" />
+                <router-link to="/product-categories">商品分类</router-link>
+              </div>
             </a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="order-management">
@@ -57,7 +75,10 @@
               <a-icon type="appstore" /><span>订单管理</span>
             </span>
             <a-menu-item key="order-list">
-              <a-icon type="tag" /> 订单列表
+              <div>
+                <a-icon type="tag" />
+                <router-link to="/order-list">订单列表</router-link>
+              </div>
             </a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="data-statistics">
@@ -65,7 +86,10 @@
               <a-icon type="appstore" /><span>数据统计</span>
             </span>
             <a-menu-item key="data-list">
-              <a-icon type="tag" /> 数据列表
+              <div>
+                <a-icon type="tag" />
+                <router-link to="/users">数据列表</router-link>
+              </div>
             </a-menu-item>
           </a-sub-menu>
         </a-menu>
@@ -153,5 +177,14 @@ export default {
 }
 .home-content {
   background: #ecf0f1;
+}
+
+.ant-menu-item {
+  a {
+    color: rgba(0, 0, 0, 0.65);
+  }
+  .router-link-exact-active {
+    color: rgb(253, 65, 84);
+  }
 }
 </style>

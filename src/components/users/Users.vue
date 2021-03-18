@@ -40,16 +40,27 @@
               @change="(checked) => handleSwitchChange(checked, index)"
             />
           </div>
-          <div slot="actions">
+          <div slot="actions" slot-scope="text, record">
             <a-space>
-              <a-button type="primary" shape="circle" icon="edit" />
+              <a-button
+                type="primary"
+                shape="circle"
+                icon="edit"
+                @click="showEditUserDialog(record)"
+              />
               <a-button type="default" shape="circle" icon="check" />
-              <a-button type="danger" shape="circle" icon="delete" />
+              <a-button
+                type="danger"
+                shape="circle"
+                icon="delete"
+                @click="showDeleteConfirm(record)"
+              />
             </a-space>
           </div>
         </a-table>
       </a-space>
     </a-card>
+    <!-- 添加用户的dialog -->
     <a-modal
       title="添加用户"
       :visible="visible"
@@ -91,7 +102,26 @@
           <a-input v-decorator="['email']" />
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="电话">
-          <a-input v-decorator="['phone']" />
+          <a-input v-decorator="['mobile']" />
+        </a-form-item>
+      </a-form>
+    </a-modal>
+    <!-- 编辑用户信息的dialog -->
+    <a-modal
+      title="修改用户"
+      :visible="editUserVisible"
+      @ok="handleEditUserOk"
+      @cancel="handleEditUserCancel"
+    >
+      <a-form :form="form">
+        <a-form-item v-bind="formItemLayout" label="用户名">
+          <a-input v-decorator="['username']" :disabled="true" />
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="邮箱">
+          <a-input v-decorator="['email']" />
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="电话">
+          <a-input v-decorator="['mobile']" />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -158,6 +188,7 @@ export default {
       columns,
       query: "",
       visible: false,
+      editUserVisible: false,
       pagination: {
         current: 1,
         pageSize: 2,
@@ -167,7 +198,7 @@ export default {
         showTotal: total => `Total ${total} items`
 
       },
-      form: this.$form.createForm(this, { name: "userAdd" }),
+      form: this.$form.createForm(this),
       formItemLayout: {
         labelCol: {
           xs: { span: 24 },
@@ -202,7 +233,7 @@ export default {
       if (status === 200) {
         this.userList = data.users;
         this.pagination.total = data.total;
-        this.$message.success(msg);
+        // this.$message.success(msg);
       } else {
         this.$message.error(msg);
       }
@@ -238,8 +269,61 @@ export default {
       // 取消的时候也需要清除表单数据
       this.form.resetFields();
       this.visible = false;
+    },
+    showDeleteConfirm(record) {
+      const vm = this;
+      this.$confirm({
+        title: "删除用户",
+        content: `你确定要删除用户${record.username}吗?`,
+        okText: "确定",
+        okType: "danger",
+        cancelText: "取消",
+        async onOk() {
+          const {meta: {msg, status}} = await vm.$http.delete(`/users/${record.id}`);
+          if (status === 200) {
+            // 删除成功提示，返回第一页，更新数据
+            vm.$message.success(msg);
+            vm.pagination.current = 1;
+            vm.getUserList();
+          } else {
+            vm.$message.error(msg);
+          }
+        },
+        onCancel() {
+          // console.log("取消");
+        }
+      });
+    },
+    showEditUserDialog({username, email, mobile, id}) {
+      // 先弹出用户编辑的dialog
+      this.editUserVisible = true;
+      // 绑定点击用户的数据到form上
+      // ! 放到nexttick中因为担心form上还没有绑定field,所以直接调用setFieldsValue有问题
+      // ! 如果我们先添加过user, 那么form上绑定的field不会为空，但是直接点击编辑就可能会空
+      this.$nextTick(() => {
+        this.form.setFieldsValue({username, email, mobile});
+        this.currentUserId = id;
+      });
+    },
+    async handleEditUserOk() {
+      // 获取userId  可以在某一时候给data添加属性，也可以通过form.getFieldValue()进行获取
+      // 这里采用第一种方式，因为antd vue对于setFieldsValue有严格限制，必须要先绑定才能设置
+      const {meta: {msg, status}} = await this.$http.put(`/users/${this.currentUserId}`, this.form.getFieldsValue());
+      // 提示成功，关闭弹出框，清除表单数据，更新数据(调用getUserList)
+      if (status === 200) {
+        this.$message.success(msg);
+        this.editUserVisible = false;
+        this.getUserList();
+        this.form.resetFields();
+      } else {
+        this.$message.error(msg);
+      }
+    },
+    handleEditUserCancel() {
+      this.editUserVisible = false;
     }
   }
+
 };
 </script>
 
