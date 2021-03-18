@@ -10,11 +10,7 @@
         </a-breadcrumb>
         <!-- 搜索框 -->
         <a-space>
-          <a-input-search
-            placeholder="请输入要搜索的内容"
-            enter-button
-            @search="onSearch"
-          />
+          <a-input-search placeholder="请输入要搜索的内容" enter-button />
           <a-button>添加用户</a-button>
         </a-space>
         <!-- 表格 -->
@@ -24,6 +20,7 @@
           class="user-table"
           :rowKey="(record) => record.id"
           :pagination="pagination"
+          @change="change"
         >
           <span slot="order" slot-scope="text, record, index">
             {{ index }}
@@ -39,9 +36,11 @@
             />
           </div>
           <div slot="actions">
-            <a-button type="primary" shape="circle" icon="edit" />
-            <a-button type="default" shape="circle" icon="check" />
-            <a-button type="danger" shape="circle" icon="delete" />
+            <a-space>
+              <a-button type="primary" shape="circle" icon="edit" />
+              <a-button type="default" shape="circle" icon="check" />
+              <a-button type="danger" shape="circle" icon="delete" />
+            </a-space>
           </div>
         </a-table>
         <!-- 分页 -->
@@ -112,14 +111,10 @@ export default {
         current: 1,
         pageSize: 2,
         total: -1,
-        showTotal: total => `Total ${total} items`,
-        change: function(page, pageSize) {
-          console.log("page:", page);
-          console.log("pageSize:", pageSize);
-          this.pagination.current = page;
-          this.pagination.pagesize = pageSize;
-          this.getUserList();
-        }
+        showSizeChanger: true,
+        pageSizeOptions: ["1", "2", "3", "4"],
+        showTotal: total => `Total ${total} items`
+
       }
     };
   },
@@ -127,7 +122,12 @@ export default {
     this.getUserList();
   },
   methods: {
-    onSearch() {},
+    change(pagination) {
+      // 这里传入的pagination已经自动转化成合理的current和pagesize
+      // console.log("pagination:", pagination);
+      this.pagination = {...pagination};
+      this.getUserList();
+    },
     async getUserList() {
       const res = await this.$http.get("/users", {
         params: {
@@ -161,5 +161,8 @@ export default {
 }
 .user-content {
   width: 100%;
+}
+.user-table {
+  overflow-x: auto;
 }
 </style>
