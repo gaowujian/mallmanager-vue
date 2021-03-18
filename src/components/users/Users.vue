@@ -23,6 +23,7 @@
           :data-source="userList"
           class="user-table"
           :rowKey="(record) => record.id"
+          :pagination="pagination"
         >
           <span slot="order" slot-scope="text, record, index">
             {{ index }}
@@ -36,6 +37,11 @@
               :defaultChecked="record.mg_state"
               @change="(checked) => handleSwitchChange(checked, index)"
             />
+          </div>
+          <div slot="actions">
+            <a-button type="primary" shape="circle" icon="edit" />
+            <a-button type="default" shape="circle" icon="check" />
+            <a-button type="danger" shape="circle" icon="delete" />
           </div>
         </a-table>
         <!-- 分页 -->
@@ -89,7 +95,11 @@ const columns = [
   {
     title: "操作",
     dataIndex: "actions",
-    key: "actions"
+    key: "actions",
+    scopedSlots: {
+      customRender: "actions"
+    }
+
   }
 ];
 
@@ -98,9 +108,19 @@ export default {
     return {
       userList: [],
       columns,
-      pagenum: 1,
-      pagesize: 10,
-      total: -1
+      pagination: {
+        current: 1,
+        pageSize: 2,
+        total: -1,
+        showTotal: total => `Total ${total} items`,
+        change: function(page, pageSize) {
+          console.log("page:", page);
+          console.log("pageSize:", pageSize);
+          this.pagination.current = page;
+          this.pagination.pagesize = pageSize;
+          this.getUserList();
+        }
+      }
     };
   },
   created() {
@@ -112,14 +132,14 @@ export default {
       const res = await this.$http.get("/users", {
         params: {
           query: "",
-          pagenum: this.pagenum,
-          pagesize: this.pagesize
+          pagenum: this.pagination.current,
+          pagesize: this.pagination.pageSize
         }
       });
       const {data, meta: {msg, status}} = res;
       if (status === 200) {
         this.userList = data.users;
-        this.total = data.total;
+        this.pagination.total = data.total;
         this.$message.success(msg);
       } else {
         this.$message.error(msg);
