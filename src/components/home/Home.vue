@@ -2,22 +2,23 @@
   <a-layout class="home-container">
     <a-layout-header class="home-header">
       <a-row>
-        <a-col :span="4">
-          img
-        </a-col>
+        <a-col :span="4"> img </a-col>
         <a-col :span="18" class="middle">
           <h3>后台管理系统</h3>
         </a-col>
         <a-col :span="2">
-          <a-button type="link" @click="handleLogout">
-            退出
-          </a-button>
+          <a-button type="link" @click="handleLogout"> 退出 </a-button>
         </a-col>
       </a-row>
     </a-layout-header>
     <a-layout>
       <a-layout-sider class="home-sider">
-        <a-menu :open-keys="openKeys" mode="inline" @openChange="onOpenChange" @click="handleItemClick">
+        <a-menu
+          :open-keys="openKeys"
+          mode="inline"
+          @openChange="onOpenChange"
+          @click="handleItemClick"
+        >
           <a-sub-menu key="user-management">
             <span slot="title">
               <a-icon type="appstore" /><span>用户管理</span>
@@ -58,7 +59,6 @@
             <a-menu-item key="order-list">
               <a-icon type="tag" /> 订单列表
             </a-menu-item>
-
           </a-sub-menu>
           <a-sub-menu key="data-statistics">
             <span slot="title">
@@ -74,7 +74,6 @@
         <router-view></router-view>
       </a-layout-content>
     </a-layout>
-
   </a-layout>
 </template>
 

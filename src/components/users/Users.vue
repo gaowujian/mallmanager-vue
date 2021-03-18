@@ -10,8 +10,13 @@
         </a-breadcrumb>
         <!-- 搜索框 -->
         <a-space>
-          <a-input-search placeholder="请输入要搜索的内容" enter-button />
-          <a-button>添加用户</a-button>
+          <a-input-search
+            placeholder="请输入要搜索的内容"
+            enter-button
+            @search="handleSearch"
+            allow-clear
+          />
+          <a-button @click="showUserAddForm">添加用户</a-button>
         </a-space>
         <!-- 表格 -->
         <a-table
@@ -43,9 +48,53 @@
             </a-space>
           </div>
         </a-table>
-        <!-- 分页 -->
       </a-space>
     </a-card>
+    <a-modal
+      title="添加用户"
+      :visible="visible"
+      @ok="handleOk"
+      @cancel="handleCancel"
+    >
+      <a-form :form="form">
+        <a-form-item v-bind="formItemLayout" label="用户名">
+          <a-input
+            v-decorator="[
+              'username',
+              {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入用户名!',
+                  },
+                ],
+              },
+            ]"
+          />
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="密码">
+          <a-input-password
+            v-decorator="[
+              'password',
+              {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入密码!',
+                  },
+                ],
+              },
+            ]"
+          />
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="邮箱">
+          <a-input v-decorator="['email']" />
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="电话">
+          <a-input v-decorator="['phone']" />
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </div>
 </template>
 
@@ -107,6 +156,8 @@ export default {
     return {
       userList: [],
       columns,
+      query: "",
+      visible: false,
       pagination: {
         current: 1,
         pageSize: 2,
@@ -115,6 +166,17 @@ export default {
         pageSizeOptions: ["1", "2", "3", "4"],
         showTotal: total => `Total ${total} items`
 
+      },
+      form: this.$form.createForm(this, { name: "userAdd" }),
+      formItemLayout: {
+        labelCol: {
+          xs: { span: 24 },
+          sm: { span: 4 }
+        },
+        wrapperCol: {
+          xs: { span: 24 },
+          sm: { span: 20 }
+        }
       }
     };
   },
@@ -131,7 +193,7 @@ export default {
     async getUserList() {
       const res = await this.$http.get("/users", {
         params: {
-          query: "",
+          query: this.query,
           pagenum: this.pagination.current,
           pagesize: this.pagination.pageSize
         }
@@ -147,6 +209,35 @@ export default {
     },
     handleSwitchChange(checked, index) {
       this.userList[index].mg_state = checked;
+    },
+    handleSearch(value, e) {
+      this.query = value;
+      this.getUserList();
+    },
+    showUserAddForm() {
+      this.visible = true;
+    },
+    handleOk() {
+      // ! 这一块和handleSubmit的逻辑是一样，我们要先验证表单内的值，然后再做操作
+      this.form.validateFields(async(err, values) => {
+        if (!err) {
+          const {meta: {msg, status}} = await this.$http.post("/users", values);
+          // 提示成功，关闭弹出框，清除表单数据，更新数据(调用getUserList)
+          if (status === 201) {
+            this.$message.success(msg);
+            this.getUserList();
+            this.form.resetFields();
+            this.visible = false;
+          } else {
+            this.$message.error(msg);
+          }
+        }
+      });
+    },
+    handleCancel() {
+      // 取消的时候也需要清除表单数据
+      this.form.resetFields();
+      this.visible = false;
     }
   }
 };
@@ -161,6 +252,7 @@ export default {
 }
 .user-content {
   width: 100%;
+  overflow: auto;
 }
 .user-table {
   overflow-x: auto;
