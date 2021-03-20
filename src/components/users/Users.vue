@@ -66,6 +66,8 @@
       :visible="visible"
       @ok="handleOk"
       @cancel="handleCancel"
+      okText="确定"
+      cancelText="取消"
     >
       <a-form :form="form">
         <a-form-item v-bind="formItemLayout" label="用户名">
@@ -216,7 +218,7 @@ export default {
   },
   methods: {
     change(pagination) {
-      // 这里传入的pagination已经自动转化成合理的current和pagesize
+      // !这里传入的pagination已经自动转化成合理的current和pagesize
       // console.log("pagination:", pagination);
       this.pagination = {...pagination};
       this.getUserList();
@@ -232,6 +234,7 @@ export default {
       const {data, meta: {msg, status}} = res;
       if (status === 200) {
         this.userList = data.users;
+        // 数据增删之后，total可能会有新值需要每次更新
         this.pagination.total = data.total;
         // this.$message.success(msg);
       } else {
