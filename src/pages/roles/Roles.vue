@@ -16,15 +16,22 @@
           </span>
           <template slot="expandedRowRender" slot-scope="record">
             <a-row v-for="level1 in record._children" :key="level1.id">
-              <a-col :span="4">{{ level1.authName }} </a-col>
+              <a-col :span="4"
+                ><a-tag color="blue" closable>{{ level1.authName }}</a-tag>
+              </a-col>
               <a-col :span="20">
                 <a-row v-for="level2 in level1.children" :key="level2.id">
-                  <a-col :span="4"> {{ level2.authName }} </a-col>
+                  <a-col :span="4">
+                    <a-tag color="green" closable>{{ level2.authName }}</a-tag>
+                  </a-col>
                   <a-col :span="20">
-                    <a-row v-for="level3 in level2.children" :key="level3.id">
-                      <a-col :span="4"> {{ level3.authName }} </a-col>
-                      <a-col :span="20"> </a-col>
-                    </a-row>
+                    <a-tag
+                      color="orange"
+                      v-for="level3 in level2.children"
+                      :key="level3.id"
+                      closable
+                      >{{ level3.authName }}</a-tag
+                    >
                   </a-col>
                 </a-row>
               </a-col>
