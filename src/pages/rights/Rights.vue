@@ -3,17 +3,24 @@
     <a-card :bordered="false">
       <a-space direction="vertical" class="rights-content">
         <my-bread level1="权限管理" level2="权限列表"></my-bread>
+
         <a-table
           :columns="columns"
           :data-source="rightList"
-          class="right-table"
           :rowKey="(record) => record.id"
           :pagination="false"
+          :scroll="{ y: 400 }"
         >
           <span slot="order" slot-scope="text, record, index">
             {{ index }}
-          </span></a-table
-        >
+          </span>
+
+          <span slot="level" slot-scope="text">
+            <span v-if="text == 0">一级</span>
+            <span v-if="text == 1">二级</span>
+            <span v-if="text == 2">三级</span>
+          </span>
+        </a-table>
       </a-space>
     </a-card>
   </div>
@@ -47,7 +54,10 @@ export default {
         {
           dataIndex: "level",
           key: "level",
-          title: "层级"
+          title: "层级",
+          scopedSlots: {
+            customRender: "level"
+          }
         }
       ]
     };
@@ -75,12 +85,12 @@ export default {
   height: calc(100% - 60px);
   margin: 30px;
   background: lightgray;
-  overflow-y: auto;
 }
 .rights-content {
   width: 100%;
   overflow: auto;
 }
+
 .rights-table {
   overflow-x: auto;
 }
