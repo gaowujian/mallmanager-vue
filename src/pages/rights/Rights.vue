@@ -1,20 +1,55 @@
 <template>
   <div class="rights-container">
     <a-card :bordered="false">
-      <a-space direction="vertical" class="right-content">
+      <a-space direction="vertical" class="rights-content">
         <my-bread level1="权限管理" level2="权限列表"></my-bread>
+        <a-table
+          :columns="columns"
+          :data-source="rightList"
+          class="right-table"
+          :rowKey="(record) => record.id"
+          :pagination="false"
+        >
+          <span slot="order" slot-scope="text, record, index">
+            {{ index }}
+          </span></a-table
+        >
       </a-space>
     </a-card>
   </div>
 </template>
 
 <script>
-
 export default {
   data() {
     return {
       rightType: "list",
-      rightList: []
+      rightList: [],
+      columns: [
+        {
+          dataIndex: "num",
+          key: "num",
+          title: "#",
+          scopedSlots: {
+            customRender: "order"
+          }
+        },
+        {
+          dataIndex: "authName",
+          key: "authName",
+          title: "权限名称"
+        },
+        {
+          dataIndex: "path",
+          key: "path",
+          title: "路径"
+        },
+        {
+          dataIndex: "level",
+          key: "level",
+          title: "层级"
+        }
+      ]
     };
   },
   created() {
@@ -40,6 +75,7 @@ export default {
   height: calc(100% - 60px);
   margin: 30px;
   background: lightgray;
+  overflow-y: auto;
 }
 .rights-content {
   width: 100%;
