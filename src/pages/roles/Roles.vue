@@ -14,6 +14,22 @@
           <span slot="order" slot-scope="text, record, index">
             {{ index }}
           </span>
+          <template slot="expandedRowRender" slot-scope="record">
+            <a-row v-for="level1 in record._children" :key="level1.id">
+              <a-col :span="4">{{ level1.authName }} </a-col>
+              <a-col :span="20">
+                <a-row v-for="level2 in level1.children" :key="level2.id">
+                  <a-col :span="4"> {{ level2.authName }} </a-col>
+                  <a-col :span="20">
+                    <a-row v-for="level3 in level2.children" :key="level3.id">
+                      <a-col :span="4"> {{ level3.authName }} </a-col>
+                      <a-col :span="20"> </a-col>
+                    </a-row>
+                  </a-col>
+                </a-row>
+              </a-col>
+            </a-row>
+          </template>
 
           <div slot="actions">
             <a-space>
@@ -72,7 +88,7 @@ export default {
       if (status === 200) {
         // ! 为了过滤掉children属性，否则会出现拓展框
         const roleList = data.map(item => {
-          return {id: item.id, roleDesc: item.roleDesc, roleName: item.roleName};
+          return {id: item.id, roleDesc: item.roleDesc, roleName: item.roleName, _children: item.children};
         });
         this.roleList = roleList;
       } else {
