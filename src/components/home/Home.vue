@@ -26,7 +26,7 @@
             <a-menu-item key="users">
               <div>
                 <a-icon type="tag" />
-                <router-link to="/users">用户列表</router-link>
+                用户列表
               </div>
             </a-menu-item>
           </a-sub-menu>
@@ -37,13 +37,13 @@
             <a-menu-item key="role-list">
               <div>
                 <a-icon type="tag" />
-                <router-link to="roles">角色列表</router-link>
+                角色列表
               </div>
             </a-menu-item>
-            <a-menu-item key="permission-list">
+            <a-menu-item key="permissions">
               <div>
                 <a-icon type="tag" />
-                <router-link to="permissions">权限列表</router-link>
+                权限列表
               </div>
             </a-menu-item>
           </a-sub-menu>
@@ -54,19 +54,19 @@
             <a-menu-item key="product-list">
               <div>
                 <a-icon type="tag" />
-                <router-link to="/products">商品列表</router-link>
+                商品列表
               </div>
             </a-menu-item>
             <a-menu-item key="category-params">
               <div>
                 <a-icon type="tag" />
-                <router-link to="/params">分类参数</router-link>
+                分类参数
               </div>
             </a-menu-item>
             <a-menu-item key="product-category">
               <div>
                 <a-icon type="tag" />
-                <router-link to="/product-categories">商品分类</router-link>
+                商品分类
               </div>
             </a-menu-item>
           </a-sub-menu>
@@ -77,7 +77,7 @@
             <a-menu-item key="order-list">
               <div>
                 <a-icon type="tag" />
-                <router-link to="/order-list">订单列表</router-link>
+                订单列表
               </div>
             </a-menu-item>
           </a-sub-menu>
@@ -88,7 +88,7 @@
             <a-menu-item key="data-list">
               <div>
                 <a-icon type="tag" />
-                <router-link to="/users">数据列表</router-link>
+                数据列表
               </div>
             </a-menu-item>
           </a-sub-menu>
@@ -145,6 +145,7 @@ export default {
     handleItemClick({ key }) {
       // !fix 修复路由跳转的问题
       // console.log("this.$router:", this.$router);
+      console.log("key:", key);
       if (this.$route.path !== `/${key}`) {
         this.$router.push({
           name: key
