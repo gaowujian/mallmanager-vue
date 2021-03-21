@@ -4,8 +4,11 @@ export default {
     axios.defaults.baseURL = "http://127.0.0.1:8888/api/private/v1/";
     axios.interceptors.request.use(
       config => {
-        // 这里可以做一些添加token的操作
-        config.headers["Authorization"] = localStorage.getItem("token");
+        if (config.url !== "/login") {
+          // 这里可以做一些添加token的操作
+          config.headers["Authorization"] = localStorage.getItem("token");
+        }
+
         return config;
       },
       error => {

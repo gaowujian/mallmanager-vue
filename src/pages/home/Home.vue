@@ -134,7 +134,7 @@ export default {
       } else {
         this.openKeys = latestOpenKey ? [latestOpenKey] : [];
       }
-      console.log("this.openKeys[0]:", this.openKeys[0]);
+      // console.log("this.openKeys[0]:", this.openKeys[0]);
     },
     handleLogout() {
       // 清除缓存，提示和路由跳转

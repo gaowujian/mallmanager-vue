@@ -13,15 +13,21 @@
 export default {
   data() {
     return {
-      rightType: "list"
+      rightType: "list",
+      rightList: []
     };
   },
   created() {
     this.getRightList();
   },
   methods: {
-    async getPermissionList() {
-      const rights = await this.$http.get("/rights/${this.}");
+    async getRightList() {
+      const {data, meta: {status, msg}} = await this.$http.get(`/rights/${this.rightType}`);
+      if (status === 200) {
+        this.rightList = data;
+      } else {
+        this.$message.error(msg);
+      }
     }
   }
 
