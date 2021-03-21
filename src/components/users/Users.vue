@@ -48,7 +48,12 @@
                 icon="edit"
                 @click="showEditUserDialog(record)"
               />
-              <a-button type="default" shape="circle" icon="check" />
+              <a-button
+                type="default"
+                shape="circle"
+                icon="check"
+                @click="showSetUserRoleDialog(record)"
+              />
               <a-button
                 type="danger"
                 shape="circle"
@@ -124,6 +129,31 @@
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="电话">
           <a-input v-decorator="['mobile']" />
+        </a-form-item>
+      </a-form>
+    </a-modal>
+    <!-- 分配角色的对话框 -->
+    <a-modal
+      title="分配角色"
+      :visible="setUserRoleVisible"
+      @ok="handleSetUserRoleOk"
+      @cancel="handleSetUserRoleCancel"
+    >
+      <a-form :form="form">
+        <a-form-item v-bind="formItemLayout" label="用户名">
+          <a-input v-decorator="['username']" :disabled="true" />
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="角色">
+          <a-select :value="userRole.id" @change="handleRoleChange">
+            <a-select-option value="-1" disabled> 请选择 </a-select-option>
+            <a-select-option
+              v-for="role in roleOptions"
+              :value="role.id"
+              :key="role.id"
+            >
+              {{ role.roleName }}{{ role.id }}
+            </a-select-option>
+          </a-select>
         </a-form-item>
       </a-form>
     </a-modal>
@@ -210,7 +240,14 @@ export default {
           xs: { span: 24 },
           sm: { span: 20 }
         }
-      }
+      },
+      setUserRoleVisible: false,
+      roleOptions: [], // 所有的可选角色
+      userRole: {
+        id: "请选择",
+        roleName: "请选择"
+      }, // 当前的用户角色
+      currentUserId: -1 // 记录当前被操作的用户id
     };
   },
   created() {
@@ -286,6 +323,7 @@ export default {
       this.form.resetFields();
       this.visible = false;
     },
+
     showDeleteConfirm(record) {
       const vm = this;
       this.$confirm({
@@ -337,6 +375,63 @@ export default {
     },
     handleEditUserCancel() {
       this.editUserVisible = false;
+    },
+
+    async showSetUserRoleDialog({username, id}) {
+      this.setUserRoleVisible = true;
+      // 复刻用户的信息
+      this.$nextTick(() => {
+        this.form.setFieldsValue({username});
+      });
+      // 记录当前被点击的人
+      this.currentUserId = id;
+
+      // 获取全部的角色信息
+      const { data, meta: {status, msg} } = await this.$http.get("/roles");
+      if (status === 200) {
+        // this.$message.success(msg);
+        this.roleOptions = data;
+      } else {
+        this.$message.error(msg);
+      }
+
+      // 请求用户的角色信息
+      // console.log("user id:", id);
+      const { data: adata, meta: {status: astatus, msg: amsg} } = await this.$http.get(`/users/${this.currentUserId}`);
+      if (astatus === 200) {
+        this.$message.success(amsg);
+        // console.log("adata:", adata);
+        const role = this.roleOptions.find(option => option.id === adata.rid);
+        // 如果分配了角色，那么角色会被初始选中
+        if (role) {
+          this.userRole = role;
+        }
+      } else {
+        this.$message.error(amsg);
+      }
+    },
+    async handleSetUserRoleOk() {
+      const id = this.currentUserId;
+      const { meta: {status, msg} } = await this.$http.put(`/users/${id}/role`, {
+        rid: this.userRole.id
+      });
+      if (status === 200) {
+        this.setUserRoleVisible = false;
+        this.$message.success(msg);
+      } else {
+        this.$message.error(msg);
+      }
+    },
+    handleSetUserRoleCancel() {
+      this.setUserRoleVisible = false;
+      // 重置角色
+      this.userRole = {
+        id: "-1",
+        roleName: "请选择"
+      };
+    },
+    handleRoleChange(value) {
+      this.userRole = this.roleOptions.find(option => option.id === value);
     }
   }
 
