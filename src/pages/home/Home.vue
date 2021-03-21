@@ -30,7 +30,7 @@
               </div>
             </a-menu-item>
           </a-sub-menu>
-          <a-sub-menu key="permission-management">
+          <a-sub-menu key="right-management">
             <span slot="title">
               <a-icon type="appstore" /><span>权限管理</span>
             </span>
@@ -40,7 +40,7 @@
                 角色列表
               </div>
             </a-menu-item>
-            <a-menu-item key="permissions">
+            <a-menu-item key="rights">
               <div>
                 <a-icon type="tag" />
                 权限列表
@@ -108,7 +108,7 @@ export default {
     return {
       rootSubmenuKeys: [
         "user-management",
-        "permission-management",
+        "right-management",
         "product-management",
         "order-management",
         "data-statistics"
