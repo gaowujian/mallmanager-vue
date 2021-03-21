@@ -3,11 +3,7 @@
     <a-card :bordered="false">
       <a-space direction="vertical" class="user-content">
         <!-- 面包屑 -->
-        <a-breadcrumb>
-          <a-breadcrumb-item>首页</a-breadcrumb-item>
-          <a-breadcrumb-item>用户管理</a-breadcrumb-item>
-          <a-breadcrumb-item>用户列表</a-breadcrumb-item>
-        </a-breadcrumb>
+        <my-bread level1="用户管理" level2="用户列表"></my-bread>
         <!-- 搜索框 -->
         <a-space>
           <a-input-search
