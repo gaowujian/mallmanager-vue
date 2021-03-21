@@ -34,7 +34,7 @@
             <span slot="title">
               <a-icon type="appstore" /><span>权限管理</span>
             </span>
-            <a-menu-item key="role-list">
+            <a-menu-item key="roles">
               <div>
                 <a-icon type="tag" />
                 角色列表
