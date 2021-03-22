@@ -19,7 +19,7 @@
           :columns="columns"
           :data-source="userList"
           class="user-table"
-          :rowKey="(record) => record.id"
+          :rowKey="record => record.id"
           :pagination="pagination"
           @change="change"
         >
@@ -33,7 +33,7 @@
           <div slot="mg_state" slot-scope="text, record">
             <a-switch
               :default-checked="record.mg_state"
-              @change="(checked) => handleSwitchChange(checked, record)"
+              @change="checked => handleSwitchChange(checked, record)"
             />
           </div>
           <div slot="actions" slot-scope="text, record">
@@ -79,10 +79,10 @@
                 rules: [
                   {
                     required: true,
-                    message: '请输入用户名!',
-                  },
-                ],
-              },
+                    message: '请输入用户名!'
+                  }
+                ]
+              }
             ]"
           />
         </a-form-item>
@@ -94,10 +94,10 @@
                 rules: [
                   {
                     required: true,
-                    message: '请输入密码!',
-                  },
-                ],
-              },
+                    message: '请输入密码!'
+                  }
+                ]
+              }
             ]"
           />
         </a-form-item>

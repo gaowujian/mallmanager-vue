@@ -15,7 +15,11 @@
             { rules: [{ required: true, message: '请输入你的用户名' }] }
           ]"
         >
-          <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
+          <a-icon
+            slot="prefix"
+            type="user"
+            style="color: rgba(0, 0, 0, 0.25)"
+          />
         </a-input>
       </a-form-item>
       <a-form-item label="密码">
@@ -27,13 +31,15 @@
           ]"
           type="password"
         >
-          <a-icon slot="prefix" type="lock" style="color:rgba(0,0,0,.25)" />
+          <a-icon
+            slot="prefix"
+            type="lock"
+            style="color: rgba(0, 0, 0, 0.25)"
+          />
         </a-input>
       </a-form-item>
       <a-form-item>
-        <a-button type="primary" block html-type="submit">
-          登录
-        </a-button>
+        <a-button type="primary" block html-type="submit"> 登录 </a-button>
       </a-form-item>
     </a-form>
   </div>
