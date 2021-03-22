@@ -7,7 +7,7 @@
         <a-table
           :columns="columns"
           :data-source="rightList"
-          :rowKey="(record) => record.id"
+          :rowKey="record => record.id"
           :pagination="false"
           :scroll="{ y: 400 }"
         >
@@ -67,7 +67,10 @@ export default {
   },
   methods: {
     async getRightList() {
-      const {data, meta: {status, msg}} = await this.$http.get(`/rights/${this.rightType}`);
+      const {
+        data,
+        meta: { status, msg }
+      } = await this.$http.get(`/rights/${this.rightType}`);
       if (status === 200) {
         this.rightList = data;
       } else {
@@ -75,7 +78,6 @@ export default {
       }
     }
   }
-
 };
 </script>
 

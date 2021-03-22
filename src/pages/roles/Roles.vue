@@ -7,7 +7,7 @@
         <a-table
           :columns="columns"
           :data-source="roleList"
-          :rowKey="(record) => record.id"
+          :rowKey="record => record.id"
           :pagination="false"
           :scroll="{ y: 300 }"
         >
@@ -91,11 +91,19 @@ export default {
   },
   methods: {
     async getRoleList() {
-      const {data, meta: {status, msg}} = await this.$http.get("/roles");
+      const {
+        data,
+        meta: { status, msg }
+      } = await this.$http.get("/roles");
       if (status === 200) {
         // ! 为了过滤掉children属性，否则会出现拓展框
         const roleList = data.map(item => {
-          return {id: item.id, roleDesc: item.roleDesc, roleName: item.roleName, _children: item.children};
+          return {
+            id: item.id,
+            roleDesc: item.roleDesc,
+            roleName: item.roleName,
+            _children: item.children
+          };
         });
         this.roleList = roleList;
       } else {
@@ -103,7 +111,6 @@ export default {
       }
     }
   }
-
 };
 </script>
 

@@ -1,20 +1,32 @@
 <template>
   <div class="login-container">
-    <a-form layout="vertical" :form="form" class="login-form" @submit.prevent="handleSubmit">
+    <a-form
+      layout="vertical"
+      :form="form"
+      class="login-form"
+      @submit.prevent="handleSubmit"
+    >
       <h2>用户登录</h2>
       <a-form-item label="用户名">
-        <a-input placeholder="请输入用户名" v-decorator="[
-          'username',
-          { rules: [{ required: true, message: '请输入你的用户名' }] },
-        ]">
+        <a-input
+          placeholder="请输入用户名"
+          v-decorator="[
+            'username',
+            { rules: [{ required: true, message: '请输入你的用户名' }] }
+          ]"
+        >
           <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
         </a-input>
       </a-form-item>
       <a-form-item label="密码">
-        <a-input placeholder="请输入密码" v-decorator="[
-          'password',
-          { rules: [{ required: true, message: '请输入密码' }] },
-        ]" type="password">
+        <a-input
+          placeholder="请输入密码"
+          v-decorator="[
+            'password',
+            { rules: [{ required: true, message: '请输入密码' }] }
+          ]"
+          type="password"
+        >
           <a-icon slot="prefix" type="lock" style="color:rgba(0,0,0,.25)" />
         </a-input>
       </a-form-item>

@@ -196,7 +196,6 @@ const columns = [
     scopedSlots: {
       customRender: "mg_state"
     }
-
   },
   {
     title: "操作",
@@ -205,7 +204,6 @@ const columns = [
     scopedSlots: {
       customRender: "actions"
     }
-
   }
 ];
 
@@ -224,7 +222,6 @@ export default {
         showSizeChanger: true,
         pageSizeOptions: ["1", "2", "3", "4"],
         showTotal: total => `Total ${total} items`
-
       },
       form: this.$form.createForm(this),
       formItemLayout: {
@@ -253,7 +250,7 @@ export default {
     change(pagination) {
       // !这里传入的pagination已经自动转化成合理的current和pagesize
       // console.log("pagination:", pagination);
-      this.pagination = {...pagination};
+      this.pagination = { ...pagination };
       this.getUserList();
     },
     async getUserList() {
@@ -264,7 +261,10 @@ export default {
           pagesize: this.pagination.pageSize
         }
       });
-      const {data, meta: {msg, status}} = res;
+      const {
+        data,
+        meta: { msg, status }
+      } = res;
       if (status === 200) {
         this.userList = data.users;
         // 数据增删之后，total可能会有新值需要每次更新
@@ -279,7 +279,9 @@ export default {
       // ! 然后重新getUserList获取最新状态,而不是直接操作data的list
       // this.userList[index].mg_state = checked;
 
-      const {meta: {msg, status}} = await this.$http.put(`/users/${record.id}/state/${checked}`);
+      const {
+        meta: { msg, status }
+      } = await this.$http.put(`/users/${record.id}/state/${checked}`);
       if (status === 200) {
         this.$message.success(msg);
       } else {
@@ -299,9 +301,11 @@ export default {
     },
     handleOk() {
       // ! 这一块和handleSubmit的逻辑是一样，我们要先验证表单内的值，然后再做操作
-      this.form.validateFields(async(err, values) => {
+      this.form.validateFields(async function(err, values) {
         if (!err) {
-          const {meta: {msg, status}} = await this.$http.post("/users", values);
+          const {
+            meta: { msg, status }
+          } = await this.$http.post("/users", values);
           // 提示成功，关闭弹出框，清除表单数据，更新数据(调用getUserList)
           if (status === 201) {
             this.$message.success(msg);
@@ -329,7 +333,9 @@ export default {
         okType: "danger",
         cancelText: "取消",
         async onOk() {
-          const {meta: {msg, status}} = await vm.$http.delete(`/users/${record.id}`);
+          const {
+            meta: { msg, status }
+          } = await vm.$http.delete(`/users/${record.id}`);
           if (status === 200) {
             // 删除成功提示，返回第一页，更新数据
             vm.$message.success(msg);
@@ -344,21 +350,26 @@ export default {
         }
       });
     },
-    showEditUserDialog({username, email, mobile, id}) {
+    showEditUserDialog({ username, email, mobile, id }) {
       // 先弹出用户编辑的dialog
       this.editUserVisible = true;
       // 绑定点击用户的数据到form上
       // ! 放到nexttick中因为担心form上还没有绑定field,所以直接调用setFieldsValue有问题
       // ! 如果我们先添加过user, 那么form上绑定的field不会为空，但是直接点击编辑就可能会空
       this.$nextTick(() => {
-        this.form.setFieldsValue({username, email, mobile});
+        this.form.setFieldsValue({ username, email, mobile });
         this.currentUserId = id;
       });
     },
     async handleEditUserOk() {
       // 获取userId  可以在某一时候给data添加属性，也可以通过form.getFieldValue()进行获取
       // 这里采用第一种方式，因为antd vue对于setFieldsValue有严格限制，必须要先绑定才能设置
-      const {meta: {msg, status}} = await this.$http.put(`/users/${this.currentUserId}`, this.form.getFieldsValue());
+      const {
+        meta: { msg, status }
+      } = await this.$http.put(
+        `/users/${this.currentUserId}`,
+        this.form.getFieldsValue()
+      );
       // 提示成功，关闭弹出框，清除表单数据，更新数据(调用getUserList)
       if (status === 200) {
         this.$message.success(msg);
@@ -373,17 +384,20 @@ export default {
       this.editUserVisible = false;
     },
 
-    async showSetUserRoleDialog({username, id}) {
+    async showSetUserRoleDialog({ username, id }) {
       this.setUserRoleVisible = true;
       // 复刻用户的信息
       this.$nextTick(() => {
-        this.form.setFieldsValue({username});
+        this.form.setFieldsValue({ username });
       });
       // 记录当前被点击的人
       this.currentUserId = id;
 
       // 获取全部的角色信息
-      const { data, meta: {status, msg} } = await this.$http.get("/roles");
+      const {
+        data,
+        meta: { status, msg }
+      } = await this.$http.get("/roles");
       if (status === 200) {
         // this.$message.success(msg);
         this.roleOptions = data;
@@ -393,7 +407,10 @@ export default {
 
       // 请求用户的角色信息
       // console.log("user id:", id);
-      const { data: adata, meta: {status: astatus, msg: amsg} } = await this.$http.get(`/users/${this.currentUserId}`);
+      const {
+        data: adata,
+        meta: { status: astatus, msg: amsg }
+      } = await this.$http.get(`/users/${this.currentUserId}`);
       if (astatus === 200) {
         this.$message.success(amsg);
         // console.log("adata:", adata);
@@ -408,7 +425,9 @@ export default {
     },
     async handleSetUserRoleOk() {
       const id = this.currentUserId;
-      const { meta: {status, msg} } = await this.$http.put(`/users/${id}/role`, {
+      const {
+        meta: { status, msg }
+      } = await this.$http.put(`/users/${id}/role`, {
         rid: this.userRole.id
       });
       if (status === 200) {
@@ -430,7 +449,6 @@ export default {
       this.userRole = this.roleOptions.find(option => option.id === value);
     }
   }
-
 };
 </script>
 
