@@ -7,7 +7,7 @@
         <a-table
           :columns="columns"
           :data-source="roleList"
-          :rowKey="record => record.id"
+          :rowKey="(record) => record.id"
           :pagination="false"
           :scroll="{ y: 300 }"
         >
@@ -15,14 +15,27 @@
             {{ index }}
           </span>
           <template slot="expandedRowRender" slot-scope="record">
+            <a-row v-if="record._children.length === 0">未分配权限</a-row>
             <a-row v-for="level1 in record._children" :key="level1.id">
-              <a-col :span="4"
-                ><a-tag color="blue" closable>{{ level1.authName }}</a-tag>
+              <a-col :span="4">
+                <a-tag
+                  color="blue"
+                  closable
+                  @close="deleteRight(record, level1.id)"
+                  >{{ level1.authName }}</a-tag
+                >
+                <a-icon type="right" />
               </a-col>
               <a-col :span="20">
                 <a-row v-for="level2 in level1.children" :key="level2.id">
                   <a-col :span="4">
-                    <a-tag color="green" closable>{{ level2.authName }}</a-tag>
+                    <a-tag
+                      color="green"
+                      closable
+                      @close="deleteRight(record, level2.id)"
+                      >{{ level2.authName }}</a-tag
+                    >
+                    <a-icon type="right" />
                   </a-col>
                   <a-col :span="20">
                     <a-tag
@@ -30,6 +43,7 @@
                       v-for="level3 in level2.children"
                       :key="level3.id"
                       closable
+                      @close="deleteRight(record, level3.id)"
                       >{{ level3.authName }}</a-tag
                     >
                   </a-col>
@@ -38,14 +52,29 @@
             </a-row>
           </template>
 
-          <div slot="actions">
+          <div slot="actions" slot-scope="record">
             <a-space>
               <a-button type="primary" shape="circle" icon="edit" />
-              <a-button type="default" shape="circle" icon="check" />
+              <a-button
+                type="default"
+                shape="circle"
+                icon="check"
+                @click="showSetRoleRightModal(record)"
+              />
               <a-button type="danger" shape="circle" icon="delete" />
             </a-space>
           </div>
         </a-table>
+        <a-modal
+          v-model="roleRightModalVisible"
+          title="修改权限"
+          ok-text="确认"
+          cancel-text="取消"
+        >
+          <p>Bla bla ...</p>
+          <p>Bla bla ...</p>
+          <p>Bla bla ...</p>
+        </a-modal>
       </a-space>
     </a-card>
   </div>
@@ -83,13 +112,17 @@ export default {
   data() {
     return {
       roleList: [],
-      columns
+      columns,
+      roleRightModalVisible: false
     };
   },
   created() {
     this.getRoleList();
   },
   methods: {
+    showSetRoleRightModal() {
+      this.roleRightModalVisible = true;
+    },
     async getRoleList() {
       const {
         data,
@@ -106,6 +139,23 @@ export default {
           };
         });
         this.roleList = roleList;
+        console.log("this.roleList:", this.roleList);
+      } else {
+        this.$message.error(msg);
+      }
+    },
+    async deleteRight(role, rightId) {
+      // data返回的是这个角色的剩余权限
+      const {
+        data,
+        meta: { status, msg }
+      } = await this.$http.delete(`/roles/${role.id}/rights/${rightId}`);
+      if (status === 200) {
+        this.$message.success(msg);
+        // 更新权限列表,直接更新这个列表
+        // this.getRoleList();
+        // 视图上局部更新一个角色的权限
+        role._children = data;
       } else {
         this.$message.error(msg);
       }
