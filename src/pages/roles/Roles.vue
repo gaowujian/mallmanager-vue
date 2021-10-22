@@ -67,13 +67,22 @@
         </a-table>
         <a-modal
           v-model="roleRightModalVisible"
-          title="修改权限"
+          title="分配权限权限"
           ok-text="确认"
           cancel-text="取消"
+          @ok="handleOk"
+          @cancel="handleCancel"
+          class="right-modal"
         >
-          <p>Bla bla ...</p>
-          <p>Bla bla ...</p>
-          <p>Bla bla ...</p>
+          <a-tree
+            checkable
+            :tree-data="treeData"
+            :default-checked-keys="defaultChecked"
+            @check="onCheck"
+            :replace-fields="replaceFields"
+            defaultExpandAll
+          >
+          </a-tree>
         </a-modal>
       </a-space>
     </a-card>
@@ -113,15 +122,77 @@ export default {
     return {
       roleList: [],
       columns,
-      roleRightModalVisible: false
+      roleRightModalVisible: false,
+      replaceFields: {
+        children: "children",
+        title: "authName",
+        key: "id"
+      },
+      treeData: [],
+      defaultChecked: [], // 默认选中的
+      currentRoleId: -1
     };
   },
   created() {
     this.getRoleList();
   },
   methods: {
-    showSetRoleRightModal() {
-      this.roleRightModalVisible = true;
+    onCheck(checkedKeys) {
+      this.defaultChecked = checkedKeys;
+    },
+    handleOk() {
+      this.setRoleRight();
+      this.roleRightModalVisible = false;
+      this.defaultChecked = [];
+    },
+    handleCancel() {
+      this.roleRightModalVisible = false;
+      this.defaultChecked = [];
+    },
+    // 跟角色赋权
+    async setRoleRight() {
+      const {
+        meta: { status, msg }
+      } = await this.$http.post(`/roles/${this.currentRoleId}/rights`, {
+        rids: this.defaultChecked.join(",")
+      });
+      if (status === 200) {
+        this.$message.success("角色赋权任务" + msg);
+        // 更新权限;
+        this.getRoleList();
+      } else {
+        this.$message.error(msg);
+      }
+    },
+    async showSetRoleRightModal(role) {
+      // 用来请求权限列表，这是一个固定的列表，每次都会请求
+      const {
+        data,
+        meta: { status, msg }
+      } = await this.$http.get("/rights/tree");
+      // 记录被编辑的角色Id
+      this.currentRoleId = role.id;
+      if (status === 200) {
+        this.$message.success(msg);
+        this.treeData = data;
+        // 设置不同角色的默认选中权限
+        this.setDefaultChecked(role);
+        console.log("this.defaultChecked:", this.defaultChecked);
+        this.roleRightModalVisible = true;
+      } else {
+        this.$message.error(msg);
+      }
+    },
+    setDefaultChecked(role) {
+      const vm = this;
+      // role._children 第一次的时候显示该用户的所有权限
+      const children = role._children || role.children;
+      if (children) {
+        children.forEach(child => {
+          vm.defaultChecked.push(child.id);
+          vm.setDefaultChecked(children);
+        });
+      }
     },
     async getRoleList() {
       const {
@@ -139,7 +210,6 @@ export default {
           };
         });
         this.roleList = roleList;
-        console.log("this.roleList:", this.roleList);
       } else {
         this.$message.error(msg);
       }
@@ -164,15 +234,23 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
 .roles-container {
   width: calc(100% - 60px);
   height: calc(100% - 60px);
   margin: 30px;
   background: lightgray;
 }
+
 .roles-content {
   width: 100%;
   overflow: auto;
+}
+
+.right-modal {
+  .ant-modal-body {
+    height: 300px;
+    overflow-y: auto;
+  }
 }
 </style>
